@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "file-organizer-agent"
+version = "0.1.0"
+description = "A privacy-first file organizer for macOS and Windows"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [{ name = "File Organizer Agent contributors" }]
+
+dependencies = [
+    "watchdog>=4.0.0",
+    "PyYAML>=6.0",
+    "keyring>=24.0",
+    "pywebview>=5.0",
+    "pystray>=0.19",
+    "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pyinstaller>=6.0",
+]
+content = [
+    "pypdf>=4.0",
+    "python-docx>=1.1",
+    "Pillow>=10.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["organizer*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

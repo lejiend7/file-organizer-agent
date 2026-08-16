@@ -1,0 +1,178 @@
+:root {
+  --border: #e3e1d9;
+  --border-strong: #c9c7bd;
+  --surface-1: #f6f5f0;
+  --surface-2: #ffffff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5f5e5a;
+  --text-muted: #888780;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --warning: #854f0b;
+  --warning-bg: #faeeda;
+  --success: #3b6d11;
+  --success-bg: #eaf3de;
+  --radius: 8px;
+  font-family: -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  height: 100vh;
+}
+
+.sidebar {
+  background: var(--surface-1);
+  border-right: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .brand { font-weight: 600; padding: 0 8px 12px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.nav-item.active { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.sidebar-footer { margin-top: auto; font-size: 11px; color: var(--text-muted); padding: 8px; }
+
+.content { padding: 20px 24px; overflow-y: auto; }
+
+.content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.content-header h1 { font-size: 16px; font-weight: 500; margin: 0; }
+
+.card {
+  background: var(--surface-1);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+button {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+button.primary { background: var(--accent); border-color: var(--accent); color: white; }
+button:hover { background: var(--surface-1); }
+button.primary:hover { opacity: 0.9; }
+
+input[type="text"] {
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  width: 100%;
+}
+
+label.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+label.toggle-row:last-child { border-bottom: none; }
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.stat-value { font-size: 22px; font-weight: 500; }
+.stat-label { font-size: 12px; color: var(--text-secondary); }
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.list-row:hover { background: var(--surface-1); }
+.row-title { font-weight: 500; }
+.row-sub { color: var(--text-secondary); font-size: 12px; }
+.row-sub.low { color: var(--warning); }
+
+.hidden { display: none !important; }
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  background: var(--surface-2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  width: 420px;
+  padding: 20px;
+}
+.modal .field-label { font-size: 12px; color: var(--text-muted); margin: 10px 0 4px; }
+.modal .preview {
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  margin: 10px 0;
+}
+.warning-banner {
+  display: flex;
+  gap: 8px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.tag {
+  font-size: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin: 3px 6px 3px 0;
+  display: inline-block;
+}
