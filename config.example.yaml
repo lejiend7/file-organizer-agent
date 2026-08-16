@@ -1,0 +1,115 @@
+# File Organizer Agent - example configuration
+#
+# The running app keeps its own copy of this file in the OS application-support
+# directory (see docs/PRODUCT_SPEC.md section 7), never beside the executable.
+# Copy this file there to customize your categories, or use the in-app
+# Extension rules editor, which edits the same structure.
+
+source_folder: null       # set via onboarding / Settings, e.g. "/Users/you/Downloads"
+destination_folder: null  # set via onboarding / Settings, e.g. "/Users/you/Organized"
+
+dry_run: false
+ai_enabled: false
+ai_confidence_threshold: 0.6
+
+# Extensions are matched case-insensitively. Longer (compound) extensions like
+# ".tar.gz" are matched before shorter ones, so a file can only belong to one
+# category. Anything not listed below - or a file with no extension - goes to
+# need_your_review/, never a guess.
+categories:
+  Images:
+    - .jpg
+    - .jpeg
+    - .png
+    - .gif
+    - .webp
+    - .svg
+    - .heic
+    - .tiff
+    - .bmp
+  Documents:
+    - .pdf
+    - .doc
+    - .docx
+    - .txt
+    - .md
+    - .rtf
+    - .pages
+    - .epub
+  Spreadsheets:
+    - .csv
+    - .xls
+    - .xlsx
+    - .numbers
+    - .ods
+  Presentations:
+    - .ppt
+    - .pptx
+    - .key
+    - .odp
+  Videos:
+    - .mp4
+    - .mov
+    - .avi
+    - .mkv
+    - .webm
+    - .m4v
+  Audio:
+    - .mp3
+    - .wav
+    - .aac
+    - .m4a
+    - .flac
+    - .ogg
+  Archives:
+    - .zip
+    - .rar
+    - .7z
+    - .tar.gz
+    - .tar
+    - .gz
+    - .bz2
+  Code:
+    - .js
+    - .jsx
+    - .ts
+    - .tsx
+    - .py
+    - .java
+    - .php
+    - .html
+    - .css
+    - .scss
+    - .json
+    - .xml
+    - .yaml
+    - .yml
+    - .sh
+    - .sql
+    - .go
+    - .rs
+    - .swift
+  Installers:
+    - .dmg
+    - .pkg
+    - .exe
+    - .msi
+
+# Never analyzed by AI, regardless of ai_enabled: sensitive or unsafe by nature.
+sensitive_patterns:
+  - ".env"
+  - "*.pem"
+  - "*.key"
+  - "*.crt"
+  - "*.cer"
+  - "*.p12"
+  - "*.pfx"
+  - "id_rsa*"
+  - "*.kdbx"
+
+# Files whose extension marks them as still downloading/incomplete - always skipped.
+temp_extensions:
+  - .crdownload
+  - .download
+  - .part
+  - .tmp

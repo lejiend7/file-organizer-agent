@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>File Organizer Agent</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="shell" style="position: relative;">
+
+  <nav class="sidebar">
+    <div class="brand">File Organizer</div>
+    <div class="nav-item active" data-view="dashboard">Dashboard</div>
+    <div class="nav-item" data-view="review">
+      <span>Review queue</span>
+      <span class="badge hidden" id="review-badge">0</span>
+    </div>
+    <div class="nav-item" data-view="settings">Settings</div>
+    <div class="nav-item" data-view="rules">Extension rules</div>
+    <div class="sidebar-footer">v0.1.0 (dev)</div>
+  </nav>
+
+  <main class="content">
+
+    <!-- Dashboard -->
+    <section id="view-dashboard">
+      <div class="content-header">
+        <h1>Dashboard</h1>
+        <button class="primary" id="monitor-toggle">Start monitoring</button>
+      </div>
+
+      <div class="card">
+        <div class="field-label">Source folder</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span id="source-path">Not selected</span>
+          <button id="select-source">Choose folder</button>
+        </div>
+        <div class="field-label">Destination folder</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="dest-path">Not selected</span>
+          <button id="select-dest">Choose folder</button>
+        </div>
+        <div id="dashboard-warning" class="warning-banner hidden" style="margin-top:12px;">
+          This destination is inside your source folder. Organizing could re-scan its own output.
+        </div>
+      </div>
+
+      <div class="card" style="display:flex; gap:16px;">
+        <label class="toggle-row" style="flex:1; border:none;"><span>Dry-run mode</span><input type="checkbox" id="dry-run-toggle" /></label>
+        <label class="toggle-row" style="flex:1; border:none;"><span>AI understanding</span><input type="checkbox" id="ai-toggle" /></label>
+      </div>
+
+      <div class="stats-row">
+        <div class="card"><div class="stat-label">Needs review</div><div class="stat-value" id="stat-review">0</div></div>
+        <div class="card"><div class="stat-label">Recent moves</div><div class="stat-value" id="stat-moves">0</div></div>
+        <div class="card"><div class="stat-label">Status</div><div class="stat-value" id="stat-status">Idle</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:500; margin-bottom:6px;">Recent activity</div>
+        <div id="activity-list"><div class="row-sub">Nothing organized yet.</div></div>
+      </div>
+    </section>
+
+    <!-- Review queue -->
+    <section id="view-review" class="hidden">
+      <div class="content-header"><h1>Review queue</h1></div>
+      <div class="card" id="review-list">
+        <div class="row-sub">No files awaiting review.</div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="view-settings" class="hidden">
+      <div class="content-header"><h1>Settings</h1></div>
+      <div class="card">
+        <label class="toggle-row"><span>Launch at login</span><input type="checkbox" id="launch-login-toggle" /></label>
+      </div>
+      <div class="card">
+        <label class="toggle-row"><span>Enable AI content understanding</span><input type="checkbox" id="ai-toggle-settings" /></label>
+        <div class="row-sub" style="padding:10px 0;">Mock provider (local, offline) is active in development. A real cloud/local provider can be added by contributors - see CONTRIBUTING.md.</div>
+        <div class="toggle-row">
+          <span>API credential</span>
+          <button id="remove-credentials">Remove</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extension rules -->
+    <section id="view-rules" class="hidden">
+      <div class="content-header">
+        <h1>Extension rules</h1>
+      </div>
+      <div id="rules-list"></div>
+      <div class="row-sub" style="margin-top:8px;">Anything not matched here goes to need_your_review - never guessed.</div>
+    </section>
+
+  </main>
+
+  <!-- Onboarding overlay -->
+  <div class="modal-backdrop hidden" id="onboarding-overlay">
+    <div class="modal">
+      <div style="font-weight:500; font-size:15px; margin-bottom:8px;">Welcome</div>
+      <div class="row-sub" style="margin-bottom:16px;">Choose a source folder to watch and a destination folder where organized files will go. Only these two folders will ever be touched.</div>
+      <button class="primary" id="onboarding-start" style="width:100%;">Get started</button>
+    </div>
+  </div>
+
+  <!-- AI review popup -->
+  <div class="modal-backdrop hidden" id="review-modal">
+    <div class="modal">
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <strong>Review AI suggestion</strong>
+        <span class="badge" id="review-modal-confidence" style="background:var(--success-bg); color:var(--success);"></span>
+      </div>
+      <div class="field-label">Current</div>
+      <div class="row-sub" id="review-modal-current"></div>
+      <div class="field-label">Proposed filename</div>
+      <input type="text" id="review-modal-filename" />
+      <div class="field-label">Proposed destination</div>
+      <input type="text" id="review-modal-destination" />
+      <div class="preview" id="review-modal-preview"></div>
+      <div class="row-sub" id="review-modal-reason" style="margin-bottom:12px;"></div>
+      <div class="row-sub" id="review-modal-privacy" style="margin-bottom:16px;"></div>
+      <div style="display:flex; gap:8px;">
+        <button id="review-modal-skip" style="flex:1;">Skip</button>
+        <button class="primary" id="review-modal-confirm" style="flex:1;">Confirm transfer</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
