@@ -27,6 +27,12 @@ permissions:
 jobs:
   build-macos:
     runs-on: macos-latest
+    env:
+      # GitHub Actions does not allow the `secrets` context directly inside
+      # a step's `if:` condition (fails workflow validation with
+      # "Unrecognized named-value: 'secrets'") - the documented workaround
+      # is to surface it through `env:` first and check that instead.
+      HAS_SIGNING_CERT: ${{ secrets.APPLE_CERTIFICATE_P12 != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -46,7 +52,7 @@ jobs:
       # just removes that prompt. See docs/PRODUCT_SPEC.md - never
       # committed, never hardcoded, opt-in via secrets only.
       - name: Import signing certificate
-        if: ${{ secrets.APPLE_CERTIFICATE_P12 != '' }}
+        if: ${{ env.HAS_SIGNING_CERT == 'true' }}
         env:
           APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
