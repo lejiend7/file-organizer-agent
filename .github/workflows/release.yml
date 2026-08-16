@@ -1,0 +1,84 @@
+name: Release
+
+# Builds a real macOS app on a real macOS runner (GitHub's macos-latest)
+# and publishes it to GitHub Releases. This exists because macOS builds
+# must run on macOS (docs/PRODUCT_SPEC.md packaging rules) - this workflow
+# is that macOS machine, so nobody needs local build tools to get a
+# release out.
+#
+# Windows packaging is Day 2 work (docs/IMPLEMENTATION_PLAN.md) and isn't
+# wired in here yet - add a windows-latest job alongside build-macos once
+# organizer/platforms/windows/adapter.py exists.
+#
+# Trigger: push a tag like v0.1.0, or run manually from the Actions tab.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag for this release, e.g. v0.1.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev,content]"
+
+      - name: Run tests (release gate - a broken build never gets published)
+        run: pytest tests/ -v
+
+      # Optional: only runs if repository secrets are configured. An
+      # unsigned build still works fine for most users (macOS shows a
+      # right-click-to-open Gatekeeper prompt on first launch); signing
+      # just removes that prompt. See docs/PRODUCT_SPEC.md - never
+      # committed, never hardcoded, opt-in via secrets only.
+      - name: Import signing certificate
+        if: ${{ secrets.APPLE_CERTIFICATE_P12 != '' }}
+        env:
+          APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          echo "$APPLE_CERTIFICATE_P12" | base64 --decode > certificate.p12
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security import certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          rm certificate.p12
+
+      - name: Build .app
+        run: ./scripts/build_macos_app.sh
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+
+      - name: Build .dmg
+        run: ./scripts/build_macos_dmg.sh
+
+      - name: Zip the .app for direct download
+        run: |
+          cd dist
+          zip -r "File Organizer Agent (macOS).zip" "File Organizer Agent.app"
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version || github.ref_name }}
+          name: File Organizer Agent ${{ inputs.version || github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/File Organizer Agent.dmg
+            dist/File Organizer Agent (macOS).zip

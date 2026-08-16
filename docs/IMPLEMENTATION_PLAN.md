@@ -2,7 +2,7 @@
 
 Tracks progress against [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md) and [`ARCHITECTURE.md`](ARCHITECTURE.md). Updated as work lands — this file, not chat history or commit messages, is the status source of truth.
 
-_Last updated: 2026-08-16._
+_Last updated: 2026-08-17._
 
 ## Day 1 — macOS foundation (shared core built here)
 
@@ -23,8 +23,10 @@ _Last updated: 2026-08-16._
 | 13 | macOS Keychain integration (via `keyring`) | done |
 | 14 | Initial AI review flow (mock provider + validator + queue) | done |
 | 15 | Core tests | done |
-| 16 | `.app` build script | scripted, unrun (needs macOS) |
-| 17 | DMG build script | scripted, unrun (needs macOS) |
+| 16 | `.app` build script | fixed (had a path bug — see below), builds locally unverified on real macOS |
+| 17 | DMG build script | fixed (same path bug), builds locally unverified on real macOS |
+| 18 | CI workflow (`macos-latest` + `windows-latest`) | done — `.github/workflows/ci.yml` |
+| 19 | Release workflow (build + publish to GitHub Releases) | done — `.github/workflows/release.yml`, unverified until first tag push |
 
 ## Day 2 — Windows (begins directly after Day 1, same core)
 
@@ -54,15 +56,22 @@ _Last updated: 2026-08-16._
 - Pytest suite covering classifier, mover safety, stability, AI validator, review queue.
 - Dev scripts: setup, run, test, clean.
 
+## Completed in a follow-up session (CI/release)
+
+- Fixed a real bug in all four `scripts/build_*.sh` scripts: each `cd`'d up two directories instead of one, which would have made every packaging build fail immediately (they ran fine as standalone scripts because `set -euo pipefail` masked the failure as "directory doesn't exist" rather than a loud error — caught by tracing the path manually before wiring these into CI).
+- `.github/workflows/ci.yml` — runs `pytest tests/` on both `macos-latest` and `windows-latest` on every push/PR to `main`, per the spec's CI requirement.
+- `.github/workflows/release.yml` — the actual way to get a real `.app`/`.dmg` without local macOS build tools: triggered by pushing a `vX.Y.Z` tag (or manual dispatch), it runs on a real `macos-latest` GitHub Actions runner, runs the full test suite as a release gate, builds the app and DMG via the existing scripts, optionally code-signs if `APPLE_SIGNING_IDENTITY` + certificate secrets are configured, and publishes both the `.dmg` and a zipped `.app` to GitHub Releases.
+- README updated with a Download section pointing at GitHub Releases and instructions for cutting a release via tag push.
+
 ## Pending / known limitations
 
-- **macOS `.app` and DMG were not built or run** — this session ran in a Linux sandbox; per the spec, macOS builds must run on macOS. `scripts/build_macos_app.sh` and `scripts/build_macos_dmg.sh` are written but unverified. Someone with a Mac needs to run them and report back.
-- **Windows work has not started** (Day 2, item-by-item above) — Day 1 must be verified on real macOS hardware first, per the working process in the project instructions.
-- **Notarization/signing** wired to environment variables but untested (no Apple credentials available in this environment).
+- **The release workflow itself is unverified** — it's never actually been run (this environment has no path to push a tag or trigger Actions; see below). The first real tag push is also the first real test of this workflow end to end. If the PyInstaller build needs an extra `--hidden-import` or `--collect-all` for pywebview/pystray on a real Mac, that'll surface there and need a follow-up fix.
+- **Windows work has not started** (Day 2, item-by-item above) — Day 1 must be verified on real macOS hardware first, per the working process in the project instructions. The release workflow does not yet have a Windows job.
+- **Notarization/signing** wired to environment variables and repository secrets but untested (no Apple credentials available in any environment used so far).
 - **Cloud AI provider** is not implemented — only `MockProvider` exists, which is sufficient for offline development and tests but not for real AI recommendations yet. A real provider is a good first external contribution (see `CONTRIBUTING.md`).
-- **CI workflows** (`.github/workflows/`) are not yet written — planned next, targeting `macos-latest` and `windows-latest` runners per the spec.
 - **Content extractors** (`organizer/content/`) currently handle TXT/MD directly; PDF/DOCX/image extraction are stubbed with clear `NotImplementedError` messages, not silently faked.
 - Manual verification still needed: running the actual `.app` and confirming Keychain prompts, launch-at-login behavior, and notifications on real macOS.
+- I (the coding agent) have no GitHub push or Actions access from either the original Linux sandbox or this follow-up session — everything above was committed locally only. A human needs to push the branch/tag to actually trigger CI and the release build.
 
 ## Test status
 

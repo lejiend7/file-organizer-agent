@@ -22,10 +22,14 @@ Most "smart" file organizers either require a cloud account or quietly upload yo
 - Optional AI: suggests a clearer filename and a semantic subfolder, with a reason and confidence score, and requires your approval for every action.
 - Runs quietly in the menu bar / system tray; launch-at-login supported.
 
+## Download
+
+Pre-built macOS releases (`.app` and `.dmg`) are published under [GitHub Releases](https://github.com/lejiend7/file-organizer-agent/releases) — built automatically by CI on a real macOS runner (see Building, below). Windows builds will appear there once Day 2 work lands.
+
 ## Getting started (development)
 
 ```bash
-git clone https://github.com/<org>/file-organizer-agent.git
+git clone https://github.com/lejiend7/file-organizer-agent.git
 cd file-organizer-agent
 ./scripts/dev_setup.sh
 ./scripts/run.sh
@@ -41,7 +45,9 @@ Copy `config.example.yaml` to see the default extension category mappings — th
 
 ## Building
 
-macOS builds must run on macOS; Windows builds must run on Windows (no cross-compilation). See `packaging/macos/` and `packaging/windows/`, and `scripts/build_macos_app.sh` / `scripts/build_windows_exe.sh`.
+macOS builds must run on macOS; Windows builds must run on Windows (no cross-compilation). See `packaging/macos/` and `packaging/windows/`, and `scripts/build_macos_app.sh` / `scripts/build_windows_exe.sh` to build locally.
+
+To cut an official release without needing local build tools, push a version tag (e.g. `git tag v0.1.0 && git push origin v0.1.0`) or run the "Release" workflow manually from the Actions tab. `.github/workflows/release.yml` builds the `.app` and `.dmg` on a macOS GitHub Actions runner, runs the full test suite as a release gate, and publishes both files to GitHub Releases. Code signing is optional — configure the `APPLE_SIGNING_IDENTITY`, `APPLE_CERTIFICATE_P12`, `APPLE_CERTIFICATE_PASSWORD`, and `KEYCHAIN_PASSWORD` repository secrets to sign; without them the build is still fully usable, just with a one-time Gatekeeper "right-click > Open" prompt.
 
 ## Contributing
 
