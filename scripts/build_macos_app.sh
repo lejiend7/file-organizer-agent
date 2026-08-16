@@ -6,7 +6,7 @@
 #   APPLE_TEAM_ID          - for notarization
 #   APPLE_NOTARIZE         - set to "1" to notarize after signing
 set -euo pipefail
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/.."
 
 if [ "$(uname)" != "Darwin" ]; then
   echo "This script must run on macOS (per docs/PRODUCT_SPEC.md packaging rules)." >&2

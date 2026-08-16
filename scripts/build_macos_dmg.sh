@@ -2,7 +2,7 @@
 # Packages File Organizer Agent.app into a .dmg. Must run on macOS, after
 # build_macos_app.sh.
 set -euo pipefail
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/.."
 
 if [ "$(uname)" != "Darwin" ]; then
   echo "This script must run on macOS." >&2

@@ -13,5 +13,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/), versioning foll
 - pywebview-based desktop UI: dashboard, review queue, AI approval popup, settings, extension rules editor, onboarding.
 - Pytest suite for core safety behavior.
 - Dev/test/build scripts.
+- CI workflow running tests on `macos-latest` and `windows-latest`.
+- Release workflow: builds the `.app`/`.dmg` on a macOS GitHub Actions runner and publishes to GitHub Releases on tag push, with optional code signing via repository secrets.
+
+### Fixed
+
+- All four `scripts/build_*.sh` packaging scripts `cd`'d to the wrong directory (one level too high), which would have broken every local and CI build.
 
 Nothing has been released yet — this is pre-1.0 development.

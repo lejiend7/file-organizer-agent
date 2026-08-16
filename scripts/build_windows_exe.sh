@@ -4,7 +4,7 @@
 # equivalent - PyInstaller does not support cross-compiling from macOS/Linux
 # to Windows). Day 2 work - see docs/IMPLEMENTATION_PLAN.md.
 set -euo pipefail
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/.."
 
 case "$(uname -s 2>/dev/null || echo unknown)" in
   MINGW*|MSYS*|CYGWIN*) ;;
